@@ -77,5 +77,27 @@ public class UserRepository {
 	
 	
 	 }
+	 
+	 public boolean checkPhone(String phone) {
+		 boolean check=false;
+		 Connection con = MyConnection.getConnection();
+			String sql ="select * from user where phone = ?";
+			 try {
+				PreparedStatement ps=con.prepareStatement(sql);
+				ps.setString(1,phone);
+				ResultSet rs = ps.executeQuery();
+				
+				while(rs.next()) {
+					check=true;
+				}
+				
+			} catch (SQLException e) {
+				System.out.println("Check email:"+e.getMessage());
+			}
+			
+			return check;
+	
+	
+	 }
 
 }

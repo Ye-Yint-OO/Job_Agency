@@ -22,12 +22,7 @@
         form .mb-3, form .row {
             margin-bottom: 10px; /* Reduce spacing between fields */
         }
-        /* Toaster styling */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1055;
+       
         }
     </style>
     <script>
@@ -46,8 +41,25 @@
 
 <body class="bg-light">
     <div class="container mt-5">
-        <!-- Toaster container -->
-        <div class="toast-container"></div>
+   <!-- Error messages -->
+        <c:if test="${not empty EmailInvalid}">
+            <div class="alert alert-danger" role="alert">${EmailInvalid}</div>
+        </c:if>
+        <c:if test="${not empty EmailExist}">
+            <div class="alert alert-danger" role="alert">${EmailExist}</div>
+        </c:if>
+        <c:if test="${not empty PhoneInvalid}">
+            <div class="alert alert-danger" role="alert">${PhoneInvalid}</div>
+        </c:if>
+        <c:if test="${not empty PhoneExist}">
+            <div class="alert alert-danger" role="alert">${PhoneExist}</div>
+        </c:if>
+        <c:if test="${not empty sessionExpired}">
+            <div class="alert alert-danger" role="alert">${sessionExpired}</div>
+        </c:if>
+        <c:if test="${not empty errorOtp}">
+            <div class="alert alert-danger" role="alert">${errorOtp}</div>
+        </c:if>
 
         <!-- Registration Form Box -->
         <div class="form-box">

@@ -26,6 +26,11 @@ public class UserService {
 		 }else {
 			 return false;
 		 }
+		 
+	 }
+	 
+	 public boolean checkPhone(String phone) {
+		 return userRepository.checkPhone(phone);
 	 }
 	
 }

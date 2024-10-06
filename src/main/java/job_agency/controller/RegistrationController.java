@@ -44,14 +44,32 @@ public class RegistrationController {
 	    public ModelAndView registerUser(@ModelAttribute("user") User user, HttpSession session) {
 	        ModelAndView mav = new ModelAndView();
 	        
-	        // Check if the user already exists
+	      
+	        if (!isValidEmail(user.getEmail())) {
+	            mav.setViewName("register");
+	            mav.addObject("EmailInvalid", "Invalid email format.");
+	            return mav;
+	        }
+	        
+	     
 	        if (userService.checkEmail(user.getEmail())) {
 	            mav.setViewName("register");
 	            mav.addObject("EmailExist", "Email already registered.");
 	            return mav;
 	        }
-
+	        
+	        
+	        if (!isValidPhone(user.getPhone())) {
+	            mav.setViewName("register");
+	            mav.addObject("PhoneInvalid", "Invalid phone number format.");
+	            return mav;
+	        }
 	       
+	        if (userService.checkPhone(user.getPhone())) {
+	            mav.setViewName("register");
+	            mav.addObject("PhoneExist", "This Phone number already registered.");
+	            return mav;
+	        }
 
 	        // Store user details in session
 	        session.setAttribute("userDetails", user);
@@ -105,6 +123,19 @@ public class RegistrationController {
 	        return mav;
 	    }
 	  
+
+	    private boolean isValidEmail(String email) {
+	      
+	        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+	        return email.matches(emailRegex);
+	    }
+	    
+
+	    private boolean isValidPhone(String phone) {
+	     
+	        String phoneRegex = "\\d{11}";
+	        return phone.matches(phoneRegex);
+	    }
 	  
 	  
 	  
