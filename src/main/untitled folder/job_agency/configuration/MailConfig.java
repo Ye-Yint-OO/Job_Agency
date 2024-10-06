@@ -1,4 +1,3 @@
-
 package job_agency.configuration;
 
 import java.util.Properties;
@@ -18,7 +17,7 @@ public class MailConfig {
         mailSender.setPort(587);
         
         mailSender.setUsername("otpsend206@gmail.com"); // Replace with your email
-        mailSender.setPassword("jpdcimqenojezvnz"); // Replace with your app password
+        mailSender.setPassword("dbuygifjmwvwlwem"); // Replace with your app password
         
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.auth", "true");

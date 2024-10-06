@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
+
 <html>
 <head>
     <meta charset="UTF-8">
@@ -84,17 +86,23 @@
         .message a:hover {
             text-decoration: underline;
         }
+        
+        
+     
 
     </style>
+    
 </head>
 <body>
 
+
+
     <div class="container">
         <h2 class="title">Verify OTP</h2>
-        <form action="VerifyOtp" method="post">
+        <form action="verifyOtp" method="post">
             <div class="input-group">
                 <label for="otp">Enter OTP</label>
-                <input type="text" id="otp" name="otp" required pattern="\d{6}" title="OTP should be a 6-digit number" placeholder="123456">
+                <input type="text" id="otp" name="otp" required pattern="\d{6}" title="OTP should be a 6-digit number" placeholder="6-digit number">
             </div>
             
             <button type="submit" class="submit">Verify OTP</button>

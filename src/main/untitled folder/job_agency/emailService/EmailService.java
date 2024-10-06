@@ -16,13 +16,13 @@ public class EmailService {
 
     public void sendOtpEmail(String toEmail, String otp) {
         try {
-        	SimpleMailMessage message = new SimpleMailMessage();
-        	message.setTo(toEmail);
-        	message.setSubject("Your OTP Code");
-        	message.setText("Dear User,\n\nYour OTP code is: " + otp + "\n\nThis OTP is valid for 5 minutes.\n\nRegards,\nYourApp Team");
-        	mailSender.send(message);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Your OTP Code");
+            message.setText("Dear User,\n\nYour OTP code is: " + otp + "\n\nThis OTP is valid for 5 minutes.\n\nRegards,\nYourApp Team");
+            mailSender.send(message);
             logger.info("Sent OTP to {}", toEmail);
-           // System.out.println("OTP"+otp);
+            System.out.println("OTP"+otp);
         } catch (Exception e) {
             logger.error("Error sending OTP to {}: {}", toEmail, e.getMessage());
         }

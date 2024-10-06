@@ -1,151 +1,42 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
-        .form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 350px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 20px;
-            position: relative;
-        }
-
-        .title {
-            font-size: 28px;
-            color: royalblue;
-            font-weight: 600;
-            letter-spacing: -1px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            padding-left: 30px;
-        }
-
-        .title::before, .title::after {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            left: 0px;
-            background-color: royalblue;
-        }
-
-        .title::before {
-            width: 18px;
-            height: 18px;
-            background-color: royalblue;
-        }
-
-        .title::after {
-            width: 18px;
-            height: 18px;
-            animation: pulse 1s linear infinite;
-        }
-
-        .message, .signin {
-            color: rgba(88, 87, 87, 0.822);
-            font-size: 14px;
-        }
-
-        .signin {
-            text-align: center;
-        }
-
-        .signin a {
-            color: royalblue;
-        }
-
-        .signin a:hover {
-            text-decoration: underline royalblue;
-        }
-
-        .flex {
-            display: flex;
-            width: 100%;
-            gap: 6px;
-        }
-
-        .form label {
-            position: relative;
-        }
-
-        .form label .input {
-            width: 100%;
-            padding: 10px 10px 20px 10px;
-            outline: 0;
-            border: 1px solid rgba(105, 105, 105, 0.397);
+        /* Custom styles for the form box */
+        .form-box {
+            max-width: 500px;
+            margin: auto;
+            padding: 15px; /* Reduced padding */
+            border: 1px solid #f0f0f0;
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #ffffff;
         }
-
-        .form label .input + span {
-            position: absolute;
-            left: 10px;
-            top: 15px;
-            color: grey;
-            font-size: 0.9em;
-            cursor: text;
-            transition: 0.3s ease;
+        form .mb-3, form .row {
+            margin-bottom: 10px; /* Reduce spacing between fields */
         }
-
-        .form label .input:placeholder-shown + span {
-            top: 15px;
-            font-size: 0.9em;
-        }
-
-        .form label .input:focus + span, .form label .input:valid + span {
-            top: 0px;
-            font-size: 0.7em;
-            font-weight: 600;
-        }
-
-        .form label .input:valid + span {
-            color: green;
-        }
-
-        .submit {
-            border: none;
-            outline: none;
-            background-color: royalblue;
-            padding: 10px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 16px;
-            transform: .3s ease;
-        }
-
-        .submit:hover {
-            background-color: rgb(56, 90, 194);
-            cursor: pointer;
-        }
-
-        @keyframes pulse {
-            from {
-                transform: scale(0.9);
-                opacity: 1;
-            }
-
-            to {
-                transform: scale(1.8);
-                opacity: 0;
-            }
+        /* Toaster styling */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1055;
         }
     </style>
-
     <script>
         function validatePasswords() {
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
 
             if (password !== confirmPassword) {
-                alert("Passwords do not match.");
+                showToast("Passwords do not match.", "danger");
                 return false; // Prevent form submission
             }
             return true; // Allow form submission
@@ -153,40 +44,69 @@
     </script>
 </head>
 
-<body>
-    <form class="form" onsubmit="return validatePasswords();">
-        <p class="title">Register</p>
-        <p class="message">Signup now and get full access to our app.</p>
+<body class="bg-light">
+    <div class="container mt-5">
+        <!-- Toaster container -->
+        <div class="toast-container"></div>
 
-        <div class="flex">
-            <label>
-                <input class="input" type="text" placeholder="Firstname" required>
-                <span>Firstname</span>
-            </label>
+        <!-- Registration Form Box -->
+        <div class="form-box">
+            <form action="doRegister" method="post" onsubmit="return validatePasswords();">
+                <h3 class="text-center mb-3">Register</h3> <!-- Slightly reduced margin -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="firstname" class="form-label">Firstname</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="col">
+                        <label for="lastname" class="form-label">Lastname</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                </div>
 
-            <label>
-                <input class="input" type="text" placeholder="Lastname" required>
-                <span>Lastname</span>
-            </label>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" name="phone"  placeholder="e.g., 09123456789" required>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" min="18" max="100" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <p class="text-center mt-3">Already have an account? <a href="login.jsp">Signin</a></p>
+            </form>
         </div>
+    </div>
 
-        <label>
-            <input class="input" type="email" placeholder="Email" required>
-            <span>Email</span>
-        </label>
-
-        <label>
-            <input id="password" class="input" type="password" placeholder="Password" required>
-            <span>Password</span>
-        </label>
-
-        <label>
-            <input id="confirmPassword" class="input" type="password" placeholder="Confirm password" required>
-            <span>Confirm password</span>
-        </label>
-
-        <button class="submit">Submit</button>
-        <p class="signin">Already have an account? <a href="#">Signin</a></p>
-    </form>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
