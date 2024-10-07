@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,6 +20,7 @@ import job_agency.service.UserService;
 
 
 @Controller
+
 public class RegistrationController {
 
 	@Autowired
@@ -137,22 +138,36 @@ public class RegistrationController {
 	        return phone.matches(phoneRegex);
 	    }
 	  
+	    
+	    
+	    @PostMapping("/resendOtp")
+	    public ModelAndView resendOtp(HttpSession session) {
+	        ModelAndView mav = new ModelAndView();
+
+	        // Retrieve the user's email from the session
+	        String pendingEmail = (String) session.getAttribute("pendingEmail");
+	        
+	        if (pendingEmail == null) {
+	            mav.setViewName("register");
+	            mav.addObject("sessionExpired", "Session expired. Please register again.");
+	            return mav;
+	        }
+
+	        // Regenerate a new OTP
+	        String newOtp = otpService.generateOtp();
+
+	        // Store the new OTP in the OTP storage service
+	        otpStorageService.storeOtp(pendingEmail, newOtp);
+
+	        // Send the OTP to the user's email
+	        emailService.sendOtpEmail(pendingEmail, newOtp);
+
+	        // Redirect back to the OTP verification page with a success message
+	        mav.setViewName("verify-otp");
+	        mav.addObject("message", "A new OTP has been sent to your email.");
+	        
+	        return mav;
+	    }
 	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-//	  public void generateAndSendOTP(User user) {
-//		  String otp =  otpService.generateOtp();
-//		  otpStorageService.storeOtp(user.getEmail(), otp);
-//		  emailService.sendOtpEmail(user.getEmail(), otp);
-//		
-//		  
-//	  }
-//	 
+ 
 	}

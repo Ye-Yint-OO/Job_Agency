@@ -92,12 +92,54 @@ public class UserRepository {
 				}
 				
 			} catch (SQLException e) {
-				System.out.println("Check email:"+e.getMessage());
+				System.out.println("Check Phone:"+e.getMessage());
 			}
 			
 			return check;
 	
 	
 	 }
+	 
+	 
+	 public User findUserByEmail(String email) {
+		    String sql = "SELECT * FROM user WHERE email = ?";
+		    try (Connection conn = MyConnection.getConnection();
+		         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-}
+		        pstmt.setString(1, email);
+		        try (ResultSet rs = pstmt.executeQuery()) {
+		            if (rs.next()) {
+		                User user = new User();
+		                user.setFirst_name(rs.getString("first_name"));
+		                user.setLast_name(rs.getString("last_name"));
+		                user.setEmail(rs.getString("email"));
+		                user.setPassword(rs.getString("password"));  // hashed password
+		                return user;
+		            }
+		        }
+		    } catch (SQLException e) {
+		        System.out.println("Error finding user by email: " + e.getMessage());
+		    }
+		    return null;
+		}
+	 
+	 public void updatePassword(String email, String hashedPassword) {
+		    String sql = "UPDATE user SET password = ? WHERE email = ?";
+		    try (Connection conn = MyConnection.getConnection();
+		         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		    	 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		            String hashedPass = passwordEncoder.encode(hashedPassword);
+
+		        pstmt.setString(1, hashedPass);
+		        pstmt.setString(2, email);
+		        pstmt.executeUpdate();
+
+		    } catch (SQLException e) {
+		        System.out.println("Error updating password: " + e.getMessage());
+		    }
+		}
+		 
+		 
+	 }
+
+

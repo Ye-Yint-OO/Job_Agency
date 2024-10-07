@@ -35,7 +35,9 @@
 
                 <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
 
-                <p class="mt-3 text-center">Didn't receive an OTP? <a href="resend-otp.jsp">Resend OTP</a></p>
+                <p class="mt-3 text-center">Didn't receive an OTP? 
+   					 <a href="<c:url value='/resendOtp'/>">Resend OTP</a>
+				</p>
             </form>
         </div>
     </div>

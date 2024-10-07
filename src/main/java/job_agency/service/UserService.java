@@ -32,5 +32,12 @@ public class UserService {
 	 public boolean checkPhone(String phone) {
 		 return userRepository.checkPhone(phone);
 	 }
+	 
+	 public User findUserByEmail(String email) {
+		    return userRepository.findUserByEmail(email);
+		}
+	 public void updatePassword(String email, String hashedPassword) {
+		    userRepository.updatePassword(email, hashedPassword);
+		}
 	
 }
