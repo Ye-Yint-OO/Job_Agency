@@ -69,7 +69,7 @@ public class LoginController {
 	      if (dbUser != null && passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
 	          // Successful login, store user info in session
 	          session.setAttribute("loggedUser", dbUser);
-	          mav.setViewName("home");  // Redirect to home page or dashboard
+	          mav.setViewName("index");  // Redirect to home page or dashboard
 	      } else {
 	          mav.setViewName("login");
 	          mav.addObject("LoginFailed", "Incorrect email or password.");
