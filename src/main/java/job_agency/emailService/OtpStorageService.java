@@ -15,16 +15,21 @@ public class OtpStorageService {
     public void storeOtp(String email, String otp) {
         OtpDetails otpDetails = new OtpDetails(otp, LocalDateTime.now().plusMinutes(EXPIRATION_MINUTES));
         otpStorage.put(email, otpDetails);
+        System.out.println("Stored OTP for email " + email + ": " + otp);  // Add this line for logging
     }
+
     public boolean validateOtp(String email, String otp) {
         if (!otpStorage.containsKey(email)) {
+            System.out.println("No OTP found for email: " + email);  // Log if no OTP found
             return false;
         }
         OtpDetails otpDetails = otpStorage.get(email);
         if (LocalDateTime.now().isAfter(otpDetails.getExpiryTime())) {
             otpStorage.remove(email);
+            System.out.println("OTP expired for email: " + email);  // Log if OTP expired
             return false;
         }
+        System.out.println("Validating OTP for email " + email + ": " + otp);  // Add this line to log the OTP being validated
         if (otp.equals(otpDetails.getOtp())) {
             otpStorage.remove(email);
             return true;

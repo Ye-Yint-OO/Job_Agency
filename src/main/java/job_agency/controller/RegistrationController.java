@@ -98,6 +98,7 @@ public class RegistrationController {
 	       User user = (User) session.getAttribute("userDetails");
 	       
 	       
+	       
 	       if(user==null) {
 	    	   mav.setViewName("register");
 	            mav.addObject("sessionExpired", "Session expired. Please register again.");
@@ -114,9 +115,9 @@ public class RegistrationController {
 	        boolean isValid = otpStorageService.validateOtp(pendingEmail, otp);
 	        if (isValid) {
 	        	userService.insertUser(user);
-	        	
+	        	 session.setAttribute("loggedUser", user.getEmail());
 	           
-	            mav.setViewName("sucess");
+	            mav.setViewName("home");
 	        } else {
 	            mav.setViewName("verify-otp");
 	            mav.addObject("errorOtp", "Invalid or expired OTP.");

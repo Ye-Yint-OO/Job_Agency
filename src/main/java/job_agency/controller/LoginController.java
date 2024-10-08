@@ -69,7 +69,7 @@ public class LoginController {
 	      if (dbUser != null && passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
 	          // Successful login, store user info in session
 	          session.setAttribute("loggedUser", dbUser);
-	          mav.setViewName("redirect:/home");  // Redirect to home page or dashboard
+	          mav.setViewName("home");  // Redirect to home page or dashboard
 	      } else {
 	          mav.setViewName("login");
 	          mav.addObject("LoginFailed", "Incorrect email or password.");
@@ -86,40 +86,43 @@ public class LoginController {
 	    }
 	  
 	  @PostMapping("/sendOtp")
-	    public ModelAndView sendOtp(@RequestParam("email") String email,HttpSession session) {
-	        ModelAndView mav = new ModelAndView();
-	        session.setAttribute("ForGoterEmail", email);
+	  public ModelAndView sendOtp(@RequestParam("email") String email, HttpSession session) {
+	      ModelAndView mav = new ModelAndView();
+	      session.setAttribute("ForGoterEmail", email);
 
-	        // Check if the email exists in the system
-	        if (!userService.checkEmail(email)) {
-	            mav.setViewName("forgot_password");
-	            mav.addObject("EmailNotExist", "Email is not registered.");
-	            return mav;
-	        }
+	      // Check if the email exists in the system
+	      if (!userService.checkEmail(email)) {
+	          mav.setViewName("forgot_password");
+	          mav.addObject("EmailNotExist", "Email is not registered.");
+	          return mav;
+	      }
 
-	        // Generate OTP
-	        String otp = otpService.generateOtp();
+	      // Generate OTP
+	      String otp = otpService.generateOtp();
 
-	        // Save OTP to storage (associate OTP with the email)
-	        otpStorageService.storeOtp(email, otp);
+	      // Save OTP to storage (associate OTP with the email)
+	      otpStorageService.storeOtp(email, otp);
 
-	        // Send OTP via email
-	        emailService.sendOtpEmail(email, otp);
+	      // Send OTP via email
+	      emailService.sendOtpEmail(email, otp);
 
-	        // Redirect to the OTP entry page
-	        mav.setViewName("enter_otp");
-	        mav.addObject("email", email); // Pass email for verification later
+	      // Redirect to the OTP entry page
+	      mav.setViewName("enter_otp");
+	      mav.addObject("email", email); // Pass email for verification later
 
-	        return mav;
-	    }
+	      return mav;
+	  }
 
       
 	        
-      
 	  @PostMapping("/verify-login-Otp")
 	  public ModelAndView verifyOtp(@RequestParam("otp") String otp, @RequestParam("email") String email) {
 	      ModelAndView mav = new ModelAndView();
 	      
+	      // Log the email and OTP to confirm values received
+	      System.out.println("Received email: " + email);
+	      System.out.println("Received OTP: " + otp);
+
 	      // Check if OTP is valid
 	      if (otpStorageService.validateOtp(email, otp)) {
 	          mav.setViewName("reset_password");
@@ -128,17 +131,18 @@ public class LoginController {
 	          mav.setViewName("enter_otp");
 	          mav.addObject("OtpInvalid", "Invalid OTP. Please try again.");
 	      }
-	      
+
 	      return mav;
 	  }
-	  
 	  
 	  @PostMapping("/resetPassword")
 	  public ModelAndView resetPassword(@RequestParam("email") String email, 
 	                                    @RequestParam("newPassword") String newPassword, 
-	                                    @RequestParam("confirmPassword") String confirmPassword) {
+	                                    @RequestParam("confirmPassword") String confirmPassword,
+	                                    HttpSession session
+	                                    ) {
 	      ModelAndView mav = new ModelAndView();
-
+	      User dbUser = userService.findUserByEmail(email);
 	      if (!newPassword.equals(confirmPassword)) {
 	          mav.setViewName("reset_password");
 	          mav.addObject("email", email);
@@ -148,7 +152,7 @@ public class LoginController {
 
 	      // Reset the password in the system
 	      userService.updatePassword(email, newPassword);
-
+	      session.setAttribute("loggedUser", dbUser);
 	      // Redirect to login page after successful password reset
 	      mav.setViewName("home");
 	      mav.addObject("PasswordResetSuccess", "Password has been successfully reset.");
@@ -162,38 +166,32 @@ public class LoginController {
 
 	      // Retrieve the user's email from the session
 	      String pendingEmail = (String) session.getAttribute("ForGoterEmail");
-	      
+
 	      if (pendingEmail == null) {
 	          mav.setViewName("login");
 	          mav.addObject("sessionExpired", "Session expired. Please register again.");
 	          return mav;
 	      }
 
-	      // Log the email for debugging
-	      System.out.println("Resending OTP for email: " + pendingEmail);
-	      
 	      // Invalidate the previous OTP
 	      otpStorageService.invalidateOtp(pendingEmail);
-	      
+
 	      // Regenerate a new OTP
 	      String newOtp = otpService.generateOtp();
-	      
+
 	      // Store the new OTP in the OTP storage service
 	      otpStorageService.storeOtp(pendingEmail, newOtp);
-	      
-	      // Log the new OTP for debugging
-	      System.out.println("New OTP generated: " + newOtp);
-	      
+
 	      // Send the OTP to the user's email
 	      emailService.sendOtpEmail(pendingEmail, newOtp);
-	      
+
 	      // Redirect back to the OTP verification page with a success message
 	      mav.setViewName("enter_otp");
+	      mav.addObject("email", pendingEmail);  // Ensure the email is passed to the view
 	      mav.addObject("message", "A new OTP has been sent to your email.");
-	      
+
 	      return mav;
 	  }
-	  
 
 	  
 	  
