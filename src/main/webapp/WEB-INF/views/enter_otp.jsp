@@ -17,28 +17,26 @@
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Enter OTP</h2>
 
-                    <form action="verify-login-Otp" method="POST">
-                       
-                        <input type="hidden" name="email" value="${email}">
+                   <form action="verify-login-Otp" method="POST">
+					  
+					    <!-- OTP Input -->
+					    <div class="mb-3">
+					        <label for="otp" class="form-label">Enter OTP</label>
+					        <input type="text" id="otp" name="otp" class="form-control" required>
+					        <c:if test="${not empty OtpInvalid}">
+					            <div class="text-danger mt-2">${OtpInvalid}</div>
+					        </c:if>
+					    </div>
+					    <!-- Submit Button -->
+					    <div class="d-grid">
+					        <button type="submit" class="btn btn-primary">Verify OTP</button>
+					    </div>
+					</form>
 
-                        <!-- OTP Input -->
-                        <div class="mb-3">
-                            <label for="otp" class="form-label">Enter OTP</label>
-                            <input type="text" id="otp" name="otp" class="form-control" required>
-                            <c:if test="${not empty OtpInvalid}">
-                                <div class="text-danger mt-2">${OtpInvalid}</div>
-                            </c:if>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Verify OTP</button>
-                        </div>
-                    </form>
 
                 
                     <div class="text-center mt-3">
-                        <a href="resendOtp?email=${email}" class="text-decoration-none">Resend OTP</a>
+                       <a href="<c:url value='/resend-otp'/>">Resend OTP</a>
                     </div>
                 </div>
             </div>

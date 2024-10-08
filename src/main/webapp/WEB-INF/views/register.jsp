@@ -22,21 +22,79 @@
         form .mb-3, form .row {
             margin-bottom: 10px; /* Reduce spacing between fields */
         }
-       
-        }
+      
+        .is-invalid {
+        border-color: red;
+    }
+    
+    .invalid-feedback {
+    color: red;
+    display: none; /* Hidden by default, shown when validation fails */
+}
     </style>
     <script>
-        function validatePasswords() {
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
+    function validateEmailFormat(email) {
+        // Simple email validation regex
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
 
-            if (password !== confirmPassword) {
-                showToast("Passwords do not match.", "danger");
-                return false; // Prevent form submission
-            }
-            return true; // Allow form submission
+    function validatePasswordFormat(password) {
+    	 return password.length >= 6;
+    }
+
+    function validatePhoneFormat(phone) {
+        // Phone must be exactly 11 digits, only numbers
+        const phonePattern = /^\d{11}$/;
+        return phonePattern.test(phone);
+    }
+
+    function validateForm() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const phone = document.getElementById("phone").value;
+
+        let isValid = true;
+
+        // Email validation
+        if (!validateEmailFormat(email)) {
+            document.getElementById("email").classList.add("is-invalid");
+            isValid = false;
+        } else {
+            document.getElementById("email").classList.remove("is-invalid");
         }
-    </script>
+
+        // Phone number validation
+        if (!validatePhoneFormat(phone)) {
+            document.getElementById("phone").classList.add("is-invalid");
+            isValid = false;
+        } else {
+            document.getElementById("phone").classList.remove("is-invalid");
+        }
+
+        // Password validation
+       if (!validatePasswordFormat(password)) {
+            document.getElementById("password").classList.add("is-invalid");
+            document.getElementById("passwordError").style.display = "block"; // Show the error message
+            isValid = false;
+        } else {
+            document.getElementById("password").classList.remove("is-invalid");
+            document.getElementById("passwordError").style.display = "none"; // Hide the error message
+        }
+
+        // Confirm password match
+        if (password !== confirmPassword) {
+            document.getElementById("confirmPassword").classList.add("is-invalid");
+            isValid = false;
+        } else {
+            document.getElementById("confirmPassword").classList.remove("is-invalid");
+        }
+
+        return isValid; // If all validations pass, form will submit
+    }
+</script>
+
 </head>
 
 <body class="bg-light">
@@ -63,7 +121,7 @@
 
         <!-- Registration Form Box -->
         <div class="form-box">
-            <form action="doRegister" method="post" onsubmit="return validatePasswords();">
+            <form action="doRegister" method="post" onsubmit="return validateForm();">
                 <h3 class="text-center mb-3">Register</h3> <!-- Slightly reduced margin -->
                 <div class="row mb-3">
                     <div class="col">
@@ -103,9 +161,13 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
+				    <label for="password" class="form-label">Password</label>
+				    <input type="password" class="form-control" id="password" name="password" required>
+				    <!-- Space for password validation message -->
+				    <div id="passwordError" class="invalid-feedback">
+				        Password must be at least 6 characters.
+				    </div>
+				</div>
 
                 <div class="mb-3">
                     <label for="confirmPassword" class="form-label">Confirm Password</label>

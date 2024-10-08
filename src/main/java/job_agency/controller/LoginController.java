@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,8 +86,9 @@ public class LoginController {
 	    }
 	  
 	  @PostMapping("/sendOtp")
-	    public ModelAndView sendOtp(@RequestParam("email") String email) {
+	    public ModelAndView sendOtp(@RequestParam("email") String email,HttpSession session) {
 	        ModelAndView mav = new ModelAndView();
+	        session.setAttribute("ForGoterEmail", email);
 
 	        // Check if the email exists in the system
 	        if (!userService.checkEmail(email)) {
@@ -113,6 +115,7 @@ public class LoginController {
 
       
 	        
+      
 	  @PostMapping("/verify-login-Otp")
 	  public ModelAndView verifyOtp(@RequestParam("otp") String otp, @RequestParam("email") String email) {
 	      ModelAndView mav = new ModelAndView();
@@ -128,6 +131,7 @@ public class LoginController {
 	      
 	      return mav;
 	  }
+	  
 	  
 	  @PostMapping("/resetPassword")
 	  public ModelAndView resetPassword(@RequestParam("email") String email, 
@@ -152,7 +156,43 @@ public class LoginController {
 	  }
 	
 
-	  
+	  @GetMapping("/resend-Otp")
+	  public ModelAndView resendOtp(HttpSession session) {
+	      ModelAndView mav = new ModelAndView();
+
+	      // Retrieve the user's email from the session
+	      String pendingEmail = (String) session.getAttribute("ForGoterEmail");
+	      
+	      if (pendingEmail == null) {
+	          mav.setViewName("login");
+	          mav.addObject("sessionExpired", "Session expired. Please register again.");
+	          return mav;
+	      }
+
+	      // Log the email for debugging
+	      System.out.println("Resending OTP for email: " + pendingEmail);
+	      
+	      // Invalidate the previous OTP
+	      otpStorageService.invalidateOtp(pendingEmail);
+	      
+	      // Regenerate a new OTP
+	      String newOtp = otpService.generateOtp();
+	      
+	      // Store the new OTP in the OTP storage service
+	      otpStorageService.storeOtp(pendingEmail, newOtp);
+	      
+	      // Log the new OTP for debugging
+	      System.out.println("New OTP generated: " + newOtp);
+	      
+	      // Send the OTP to the user's email
+	      emailService.sendOtpEmail(pendingEmail, newOtp);
+	      
+	      // Redirect back to the OTP verification page with a success message
+	      mav.setViewName("enter_otp");
+	      mav.addObject("message", "A new OTP has been sent to your email.");
+	      
+	      return mav;
+	  }
 	  
 
 	  

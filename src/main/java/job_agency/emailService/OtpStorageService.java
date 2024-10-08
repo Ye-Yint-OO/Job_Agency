@@ -16,7 +16,6 @@ public class OtpStorageService {
         OtpDetails otpDetails = new OtpDetails(otp, LocalDateTime.now().plusMinutes(EXPIRATION_MINUTES));
         otpStorage.put(email, otpDetails);
     }
-
     public boolean validateOtp(String email, String otp) {
         if (!otpStorage.containsKey(email)) {
             return false;
@@ -32,6 +31,13 @@ public class OtpStorageService {
         }
         return false;
     }
+    
+    
+    public void invalidateOtp(String email) {
+        otpStorage.remove(email); // Invalidate the existing OTP
+    }
+    
+    
     // Inner class to hold OTP and its expiration time
     private static class OtpDetails {
         private String otp;
